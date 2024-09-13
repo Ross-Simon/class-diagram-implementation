@@ -33,7 +33,7 @@ public:
 
 class ShoppingCart {
 private:
-    CartItem* items[100];
+    CartItem* items[10];
     int itemCount = 0;
 
 public:
@@ -44,7 +44,7 @@ public:
                 return;
             }
         }
-        if (itemCount < 100) {
+        if (itemCount < 10) {
             items[itemCount++] = new CartItem(product);
         }
     }
@@ -81,7 +81,7 @@ private:
     static int orderCounter;
     int orderId;
     double totalAmount;
-    CartItem* items[100];
+    CartItem* items[10];
     int itemCount;
 
 public:
@@ -94,13 +94,13 @@ public:
 
     void display() {
         cout << "Order ID: " << orderId << "\n";
-        cout << "Total Amount: $" << totalAmount << "\n";
+        cout << "Total Amount: $" << fixed << setprecision(2) << totalAmount << "\n";
         cout << "Order Details:\n";
         cout << "Product ID\tName\t\tPrice\tQuantity\n";
         for (int i = 0; i < itemCount; i++) {
             cout << items[i]->product.getID() << "\t\t" 
                  << items[i]->product.getName() << "\t" 
-                 << items[i]->product.getPrice() << "\t" 
+                 << fixed << setprecision(2) << items[i]->product.getPrice() << "\t" 
                  << items[i]->quantity << "\n";
         }
         cout << "\n";
@@ -120,7 +120,7 @@ private:
     };
 
     ShoppingCart cart;
-    Order* orders[100];
+    Order* orders[10];
     int orderCount = 0;
 
 public:
@@ -135,7 +135,7 @@ public:
     void menu() {
         int menuInput;
         do {
-            cout << "__________________________________________\n";
+            cout << "\n__________________________________________\n";
             cout << "_     Laptop Essentials Online Store     -\n";
             cout << "__________________________________________\n\n";
 
@@ -170,9 +170,9 @@ public:
     void addProductToCart() {
         while (true) {
             string id;
-            cout << "Enter the Product ID of the item you want to add to the shopping cart (0 to stop): ";
+            cout << "\nEnter the Product ID of the item you want to add to the shopping cart (Enter S to stop): ";
             cin >> id;
-            if (id == "0") break;
+            if (id == "S" || id == "s") break;
 
             for (int i = 0; i < 5; i++) {
                 if (products[i].getID() == id) {
@@ -190,19 +190,27 @@ public:
         cout << "Do you want to check out all the products? (Y/N): ";
         cin >> choice;
         if (choice == 'Y' || choice == 'y') {
-            if (orderCount < 100) {
-                orders[orderCount++] = new Order(cart);
-                cout << "You have successfully checked out the products!\n";
+            if (cart.getItemCount() > 0) {
+                if (orderCount < 10) {
+                    orders[orderCount++] = new Order(cart);
+                    cout << "You have successfully checked out the products!\n";
+                } else {
+                    cout << "Order limit reached!\n";
+                }
             } else {
-                cout << "Order limit reached!\n";
+                cout << "Your cart is empty!\n";
             }
         }
     }
 
     void viewOrders() {
         cout << "Orders:\n";
-        for (int i = 0; i < orderCount; i++) {
-            orders[i]->display();
+        if (orderCount == 0) {
+            cout << "No orders have been placed yet.\n";
+        } else {
+            for (int i = 0; i < orderCount; i++) {
+                orders[i]->display();
+            }
         }
     }
 };
